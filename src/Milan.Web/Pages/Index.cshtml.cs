@@ -13,11 +13,13 @@ public sealed class IndexModel(CatalogService catalog) : PageModel
     public void OnGet()
     {
         var allProducts = catalog.GetAll();
-        Brands = allProducts.Select(product => product.Brand).Distinct().OrderBy(brand => brand).ToArray();
-        Types = allProducts.Select(product => product.Type).Distinct().OrderBy(type => type).ToArray();
+        Brands = DistinctSorted(allProducts, product => product.Brand);
+        Types = DistinctSorted(allProducts, product => product.Type);
         Products = allProducts
             .Where(product => string.IsNullOrEmpty(Brand) || string.Equals(product.Brand, Brand, StringComparison.OrdinalIgnoreCase))
             .Where(product => string.IsNullOrEmpty(Type) || string.Equals(product.Type, Type, StringComparison.OrdinalIgnoreCase))
             .ToArray();
     }
+
+    private static string[] DistinctSorted(IEnumerable<Product> products, Func<Product, string> selector) => products.Select(selector).Distinct().OrderBy(value => value).ToArray();
 }
