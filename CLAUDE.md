@@ -7,7 +7,7 @@ MILAN C# Lightweight: tienda educativa de drones en ASP.NET Core Razor Pages (.N
 ```powershell
 dotnet restore Milan.sln
 dotnet build Milan.sln
-dotnet test Milan.sln                      # xUnit, 11 pruebas
+dotnet test Milan.sln                      # xUnit, 15 pruebas
 dotnet test Milan.sln --filter "FullyQualifiedName~CommerceTests"   # una clase
 dotnet run --project src/Milan.Web         # https://localhost:54626
 ```
