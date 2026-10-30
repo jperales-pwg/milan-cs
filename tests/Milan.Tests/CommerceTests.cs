@@ -46,12 +46,43 @@ public sealed class CommerceTests
 
     [Theory]
     [InlineData(-1)]
+    [InlineData(11)]
     [InlineData(100)]
     public void CartRejectsInvalidQuantities(int quantity)
     {
         var cart = new Cart();
         cart.Add(_catalog.Find(1)!);
         Assert.Throws<ArgumentOutOfRangeException>(() => cart.SetQuantity(1, quantity));
+    }
+
+    [Fact]
+    public void CartAddKeepsQuantityAtTenWhenLimitIsReached()
+    {
+        var cart = new Cart();
+        var product = _catalog.Find(1)!;
+        for (var i = 0; i < 10; i++) cart.Add(product);
+        Assert.Equal(10, cart.Items.Single().Quantity);
+        cart.Add(product);
+        Assert.Equal(10, cart.Items.Single().Quantity);
+    }
+
+    [Fact]
+    public void CartAcceptsQuantityOfTen()
+    {
+        var cart = new Cart();
+        cart.Add(_catalog.Find(1)!);
+        cart.SetQuantity(1, 10);
+        Assert.Equal(10, cart.Items.Single().Quantity);
+    }
+
+    [Fact]
+    public void CartRejectsElevenAndKeepsPreviousQuantity()
+    {
+        var cart = new Cart();
+        cart.Add(_catalog.Find(1)!);
+        cart.SetQuantity(1, 4);
+        Assert.Throws<ArgumentOutOfRangeException>(() => cart.SetQuantity(1, 11));
+        Assert.Equal(4, cart.Items.Single().Quantity);
     }
 
     [Fact]

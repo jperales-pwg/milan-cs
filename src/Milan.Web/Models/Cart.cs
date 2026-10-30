@@ -2,6 +2,7 @@ namespace Milan.Web.Models;
 
 public sealed class Cart
 {
+    private const int MaxQuantity = 10;
     public List<CartItem> Items { get; set; } = [];
     public decimal Total => Items.Sum(item => item.UnitPrice * item.Quantity);
 
@@ -10,13 +11,13 @@ public sealed class Cart
         var item = Items.FirstOrDefault(item => item.ProductId == product.Id);
         if (item is null)
             Items.Add(new CartItem(product.Id, product.Name, product.Description, product.ImagePath, product.Price, 1));
-        else
+        else if (item.Quantity < MaxQuantity)
             item.Quantity++;
     }
 
     public void SetQuantity(int productId, int quantity)
     {
-        if (quantity < 0 || quantity > 99) throw new ArgumentOutOfRangeException(nameof(quantity));
+        if (quantity < 0 || quantity > MaxQuantity) throw new ArgumentOutOfRangeException(nameof(quantity));
         var item = Items.FirstOrDefault(item => item.ProductId == productId);
         if (item is null) return;
         if (quantity == 0) Items.Remove(item);
